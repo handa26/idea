@@ -7,8 +7,18 @@
         </div>
 
         <div class="flex gap-x-5 items-center">
-            <a href="/login">Login</a>
-            <a href="/register" class="btn">Register</a>
+            @auth
+                <form action="/logout" method="POST">
+                    @csrf
+
+                    <button class="btn bg-red-400">Log Out</button>
+                </form>
+            @endauth
+
+            @guest    
+                <a href="/login">Login</a>
+                <a href="/register" class="btn">Register</a>
+            @endguest
         </div>
     </div>
 </nav>
