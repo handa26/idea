@@ -28,7 +28,7 @@ class IdeaController extends Controller
 
         $ideas = $user
             ->ideas()
-            ->when($status, fn($query, $status) => $query->where('status', $status))
+            ->when($status, fn ($query, $status) => $query->where('status', $status))
             ->get();
 
         return view('ideas.index', [
