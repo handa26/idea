@@ -4,7 +4,7 @@
             <h1 class="text-3xl font-bold">Ideas</h1>
             <p class="text-muted-foreground text-sm mt-2">Capture your thoughts. Make a plan.</p>
 
-            <x-card is="button" type="button" class="mt-10 cursor-pointer h-32 w-full text-left" x-data
+            <x-card is="button" type="button" data-test="create-idea-button" class="mt-10 cursor-pointer h-32 w-full text-left" x-data
                 @click="$dispatch('open-modal', 'create-idea')">
                 <p>What's the idea?</p>
             </x-card>
@@ -55,6 +55,7 @@
                         <div class="flex gap-x-3">
                             @foreach (App\IdeaStatus::cases() as $status)
                                 <button type="button" @click="status = @js($status->value)"
+                                    data-test="button-status-{{ $status->value }}"
                                     class="btn flex-1 h-10"
                                     :class="{ 'btn-outlined': status !== @js($status->value) }">{{ $status->label() }}</button>
                             @endforeach
