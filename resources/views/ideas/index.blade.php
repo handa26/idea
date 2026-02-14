@@ -85,12 +85,13 @@
                             </template>
 
                             <div class="flex gap-x-2 items-center">
-                                <input x-model="newLink" type="url" id="new-link" placeholder="https://example.com"
-                                    autocomplete="url" class="input flex-1" spellcheck="false">
+                                <input x-model="newLink" type="url" id="new-link" data-test="new-link"
+                                    placeholder="https://example.com" autocomplete="url" class="input flex-1"
+                                    spellcheck="false">
 
                                 <button type="button" @click="links.push(newLink.trim()); newLink ='';"
                                     :disabled="newLink.trim().length === 0" aria-label="Add link button"
-                                    class="form-muted-icon">
+                                    data-test="submit-new-link-button" class="form-muted-icon">
                                     <x-icons.close class="rotate-45" />
                                 </button>
                             </div>
