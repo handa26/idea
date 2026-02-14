@@ -73,7 +73,7 @@
                         <fieldset class="space-y-3">
                             <legend class="label">Links</legend>
 
-                            <template x-for="(link, index) in links">
+                            <template x-for="(link, index) in links" :key="link">
                                 <div class="flex gap-x-2 items-center">
                                     <input name="links[]" x-model="link" class="input">
 
