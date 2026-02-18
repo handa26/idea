@@ -1,9 +1,17 @@
+@props(['idea' => new App\Models\Idea()])
+
 <x-modal
-    name="create-idea"
-    title="New Idea"
+    name="{{ $idea->exists ? 'edit-idea' : 'create-idea' }}"
+    title="{{ $idea->exists ? 'Edit Idea' : 'Create Idea' }}"
 >
     <form
-        x-data="{ status: 'pending', newLink: '', links: [], newStep: '', steps: [] }"
+        x-data="{
+            status: @js(old('status', $idea->status->value)),
+            newLink: '',
+            links: @js(old('links', $idea->links ?? [])),
+            newStep: '',
+            steps: @js(old('steps', $idea->steps->map(fn($step) => $step->description)))
+        }"
         action="{{ route('idea.store') }}"
         method="POST"
         enctype="multipart/form-data"
@@ -16,6 +24,7 @@
                 name="title"
                 placeholder="Enter an idea for your title"
                 autofocus
+                :value="$idea->title"
                 required
             />
 
@@ -52,6 +61,7 @@
                 name="description"
                 type="textarea"
                 placeholder="Describe your idea"
+                :value="$idea->description"
             />
 
             <div class="space-y-2">
@@ -59,6 +69,21 @@
                     for="image"
                     class="label"
                 >Featured Image</label>
+
+                @if ($idea->image_path)
+                    <div class="space-y-2">
+                        <img
+                            src="{{ asset('storage/' . $idea->image_path) }}"
+                            alt=""
+                            class="w-full h-48 object-cover rounded-lg"
+                        >
+
+                        <button
+                            class="btn btn-outlined bg-red-500 h-10 w-full"
+                            form="delete-image-form"
+                        >Remove Image</button>
+                    </div>
+                @endif
 
                 <input
                     type="file"
@@ -132,6 +157,7 @@
                                 name="links[]"
                                 x-model="link"
                                 class="input"
+                                readonly
                             >
 
                             <button
@@ -179,8 +205,21 @@
                 <button
                     type="submit"
                     class="btn"
-                >Create</button>
+                >
+                    {{ $idea->exists ? 'Update' : 'Create' }}
+                </button>
             </div>
         </div>
     </form>
+
+    @if ($idea->image_path)
+        <form
+            action="{{ route('idea.image.destroy', $idea) }}"
+            method="POST"
+            id="delete-image-form"
+        >
+            @csrf
+            @method('DELETE')
+        </form>
+    @endif
 </x-modal>

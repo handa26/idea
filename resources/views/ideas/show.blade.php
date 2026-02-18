@@ -1,18 +1,29 @@
 <x-layout>
     <div class="py-8 max-w-4xl mx-auto">
         <div class="flex justify-between mb-7 items-center">
-            <a href="{{ route('idea.index') }}" class="flex items-center gap-x-2 text-sm font-medium">
+            <a
+                href="{{ route('idea.index') }}"
+                class="flex items-center gap-x-2 text-sm font-medium"
+            >
                 <x-icons.arrow-back />
                 Back to Ideas
             </a>
 
             <div class="gap-x-3 flex items-center">
-                <button class="btn btn-outlined">
+                <button
+                    x-data
+                    class="btn btn-outlined"
+                    data-test="edit-idea-button"
+                    @click="$dispatch('open-modal', 'edit-idea')"
+                >
                     <x-icons.edit class="size-5" />
-                    Edit
+                    Edit Idea
                 </button>
 
-                <form action="{{ route('idea.destroy', $idea) }}" method="POST">
+                <form
+                    action="{{ route('idea.destroy', $idea) }}"
+                    method="POST"
+                >
                     @csrf
                     @method('DELETE')
 
@@ -24,8 +35,11 @@
         <div class="mt-6 space-y-6">
             @if ($idea->image_path)
                 <div class="rounded-lg overflow-hidden">
-                    <img src="{{ asset('storage/' . $idea->image_path) }}" alt=""
-                        class="w-full h-auto object-cover">
+                    <img
+                        src="{{ asset('storage/' . $idea->image_path) }}"
+                        alt=""
+                        class="w-full h-auto object-cover"
+                    >
                 </div>
             @endif
 
@@ -41,11 +55,13 @@
                 </div>
             </div>
 
-            <x-card class="mt-6">
-                <div class="text-foreground max-w-none cursor-pointer">
-                    {{ $idea->description }}
-                </div>
-            </x-card>
+            @if ($idea->description)
+                <x-card class="mt-6">
+                    <div class="text-foreground max-w-none cursor-pointer">
+                        {{ $idea->description }}
+                    </div>
+                </x-card>
+            @endif
 
             @if ($idea->steps->count())
                 <div>
@@ -53,13 +69,19 @@
                     <div class="mt-3 space-y-2">
                         @foreach ($idea->steps as $step)
                             <x-card>
-                                <form action="{{ route('step.update', $step) }}" method="POST">
+                                <form
+                                    action="{{ route('step.update', $step) }}"
+                                    method="POST"
+                                >
                                     @csrf
                                     @method('PATCH')
 
                                     <div class="flex items-center gap-x-3">
-                                        <button type="submit" role="checkbox"
-                                            class="size-5 flex items-center justify-center rounded-lg text-primary-foreground {{ $step->completed ? 'bg-primary' : 'border border-primary' }}">&check;</button>
+                                        <button
+                                            type="submit"
+                                            role="checkbox"
+                                            class="size-5 flex items-center justify-center rounded-lg text-primary-foreground {{ $step->completed ? 'bg-primary' : 'border border-primary' }}"
+                                        >&check;</button>
                                         <span
                                             class="{{ $step->completed ? 'line-through text-muted-foreground' : '' }}">{{ $step->description }}</span>
                                     </div>
@@ -75,7 +97,10 @@
                     <h3 class="font-bold text-xl mt-6">Links</h3>
                     <div class="mt-3 space-y-2">
                         @foreach ($idea->links as $link)
-                            <x-card :href="$link" class="text-primary font-medium flex gap-x-3 items-center">
+                            <x-card
+                                :href="$link"
+                                class="text-primary font-medium flex gap-x-3 items-center"
+                            >
                                 <x-icons.edit class="size-5" />
                                 {{ $link }}
                             </x-card>
@@ -84,5 +109,7 @@
                 </div>
             @endif
         </div>
+
+        <x-idea.modal :idea="$idea" />
     </div>
 </x-layout>
