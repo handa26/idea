@@ -10,13 +10,17 @@
             newLink: '',
             links: @js(old('links', $idea->links ?? [])),
             newStep: '',
-            steps: @js(old('steps', $idea->steps->map(fn($step) => $step->description)))
+            steps: @js(old('steps', $idea->steps->map->only(['id', 'description', 'completed'])))
         }"
-        action="{{ route('idea.store') }}"
+        action="{{ $idea->exists ? route('idea.update', $idea) : route('idea.store') }}"
         method="POST"
         enctype="multipart/form-data"
     >
         @csrf
+
+        @if ($idea->exists)
+            @method('PATCH')
+        @endif
 
         <div class="space-y-6">
             <x-form.field
@@ -99,12 +103,19 @@
 
                     <template
                         x-for="(step, index) in steps"
-                        :key="step"
+                        :key="step.id || index"
                     >
                         <div class="flex gap-x-2 items-center">
                             <input
-                                name="steps[]"
-                                x-model="step"
+                                :name="`steps[${index}][description]`"
+                                x-model="step.description"
+                                class="input"
+                                readonly
+                            >
+                            <input
+                                type="hidden"
+                                :name="`steps[${index}][completed]`"
+                                x-model="step.completed ? '1' : '0'"
                                 class="input"
                                 readonly
                             >
@@ -132,7 +143,10 @@
 
                         <button
                             type="button"
-                            @click="steps.push(newStep.trim()); newStep ='';"
+                            @click="
+                                steps.push({ description: newStep.trim(), completed: false }); 
+                                newStep ='';
+                            "
                             :disabled="newStep.trim().length === 0"
                             aria-label="Add step button"
                             data-test="submit-new-step-button"
