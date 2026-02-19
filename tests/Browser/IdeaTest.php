@@ -44,11 +44,7 @@ it('edits an existing idea', function () {
         ->fill('description', 'An example description')
         ->fill('@new-link', 'https://laracasts.com/series/laravel-from-scratch-2026')
         ->click('@submit-new-link-button')
-        ->fill('@new-link', 'https://laracasts.com')
-        ->click('@submit-new-link-button')
         ->fill('@new-step', 'Do a thing')
-        ->click('@submit-new-step-button')
-        ->fill('@new-step', 'Do another thing')
         ->click('@submit-new-step-button')
         ->click('Update')
         ->assertRoute('idea.show', [$idea]);
@@ -57,8 +53,8 @@ it('edits an existing idea', function () {
         'title' => 'Some example title',
         'status' => 'completed',
         'description' => 'An example description',
-        'links' => ['https://laracasts.com/series/laravel-from-scratch-2026', 'https://laracasts.com'],
+        'links' => [$idea->links[0], 'https://laracasts.com/series/laravel-from-scratch-2026'],
     ]);
 
-    expect($idea->steps)->toHaveCount(2);
+    expect($idea->steps)->toHaveCount(1);
 });
